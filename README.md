@@ -102,31 +102,27 @@ tail -f scraper.log
 
 ---
 
-## ☁️ Ejecutar de forma Gratuita en la Nube (GitHub Actions)
+## ☁️ Ejecutar de forma Gratuita en la Nube (Cloudflare Workers - RECOMENDADO)
 
-Si no quieres dejar tu laptop encendida, puedes usar **GitHub Actions** para ejecutar el scraper automáticamente en los servidores de GitHub de forma totalmente gratuita y segura.
+Si no quieres dejar tu laptop encendida y necesitas que las notificaciones lleguen **exactamente cada 10 minutos en punto** (sin los retrasos variables que tiene GitHub Actions), el scraper puede correr de forma directa y serverless en **Cloudflare Workers**.
 
-### Pasos para configurarlo:
+El proyecto ya está configurado con un **Cron Trigger** y desplegado en tu cuenta.
 
-1. **Crear un repositorio en GitHub:**
-   - Ve a tu cuenta de GitHub y crea un nuevo repositorio (puede ser **Público** para minutos de Actions ilimitados y gratuitos, o **Privado** para hasta 2000 minutos libres al mes).
-   - *Nota: Es totalmente seguro usar un repositorio público porque tus credenciales no se subirán al repositorio (se guardan encriptadas en la configuración).*
+### Cómo funciona el Scraper en Cloudflare:
+1. **Ejecución Programada (Cron)**: Cloudflare ejecuta el script de scraping interno cada 10 minutos automáticamente.
+2. **Ejecución Manual (Por URL)**: Puedes forzar un envío inmediato en cualquier momento abriendo la URL de tu worker en tu navegador web:
+   `https://onpe-proxy-segundavuelta.tatania.workers.dev/`
+   *(Esto ejecutará el scraper al instante y te mostrará el reporte enviado en pantalla).*
 
-2. **Subir los archivos de tu proyecto:**
-   - Inicializa git, añade los archivos y súbelos a tu repositorio (¡asegúrate de que tu archivo `.env` NO se suba!).
-   - Los únicos archivos necesarios en el repositorio son:
-     - `scraper.py`
-     - `.github/workflows/scraper.yml` (que ya está creado en tu espacio de trabajo)
+### Cómo gestionar las credenciales de Telegram en tu Worker:
+Si necesitas cambiar las credenciales de tu bot de Telegram o tu chat ID, puedes hacerlo desde tu Mac ejecutando los siguientes comandos en la carpeta `onpe-proxy`:
 
-3. **Configurar los Secretos de Telegram en GitHub:**
-   - En tu repositorio de GitHub, ve a la pestaña **Settings** (Configuración) -> **Secrets and variables** -> **Actions**.
-   - Haz clic en **New repository secret** (Nuevo secreto del repositorio) y crea dos secretos:
-     - Nombre: `TELEGRAM_BOT_TOKEN` | Valor: *tu token de bot*
-     - Nombre: `TELEGRAM_CHAT_ID` | Valor: *tu chat id del canal/grupo*
-   - Estos valores estarán encriptados y solo la máquina virtual temporal de GitHub los leerá al ejecutar el script.
+```bash
+# Cambiar el token del Bot de Telegram
+npx wrangler secret put TELEGRAM_BOT_TOKEN
 
-4. **Activar las ejecuciones (Actions):**
-   - Ve a la pestaña **Actions** en tu repositorio de GitHub.
-   - Si ves un aviso sobre flujos de trabajo desactivados, haz clic en **"I understand my workflows, go ahead and enable them"**.
-   - Selecciona el flujo `"ONPE Scraper Automático"` a la izquierda y pulsa en **Run workflow** para forzar una ejecución manual de prueba.
-   - El script correrá automáticamente en los servidores de GitHub cada 10 minutos y te enviará las notificaciones al canal de Telegram de manera continua y autónoma.
+# Cambiar el ID de chat / canal
+npx wrangler secret put TELEGRAM_CHAT_ID
+```
+
+*(O de forma visual entrando al panel de control de tu cuenta en [dash.cloudflare.com](https://dash.cloudflare.com/), navegando a **Workers & Pages** -> **onpe-proxy-segundavuelta** -> **Settings** -> **Variables**).*

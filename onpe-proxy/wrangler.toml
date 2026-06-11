@@ -1,0 +1,6 @@
+name = "onpe-proxy-segundavuelta"
+main = "src/index.js"
+compatibility_date = "2024-03-01"
+
+[triggers]
+crons = ["*/10 * * * *"]

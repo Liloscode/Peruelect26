@@ -9,3 +9,7 @@ scraper.log
 __pycache__/
 *.pyc
 .DS_Store
+
+# Cloudflare Wrangler build files and node modules
+.wrangler/
+node_modules/
