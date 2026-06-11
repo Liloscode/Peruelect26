@@ -1,0 +1,30 @@
+name: ONPE Scraper Automático
+
+on:
+  schedule:
+    # Se ejecuta cada 10 minutos
+    - cron: '*/10 * * * *'
+  # Permite ejecutarlo manualmente desde la pestaña "Actions" en GitHub
+  workflow_dispatch:
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Copia el código de tu repositorio a la máquina virtual temporal de GitHub
+    - name: Descargar Código
+      uses: actions/checkout@v4
+
+    # 2. Configura Python
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    # 3. Ejecuta el scraper una sola vez (modo --test) pasando los secrets de GitHub
+    - name: Ejecutar Scraper
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: python scraper.py --test

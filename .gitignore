@@ -1,0 +1,11 @@
+# Evitar subir archivos con claves sensibles
+.env
+
+# Evitar subir logs locales
+*.log
+scraper.log
+
+# Python cache y otros archivos del sistema
+__pycache__/
+*.pyc
+.DS_Store
