@@ -25,10 +25,7 @@ file_handler = logging.FileHandler(log_file, encoding='utf-8')
 file_handler.setFormatter(log_formatter)
 root_logger.addHandler(file_handler)
 
-# URLs de la API de la ONPE y Cabeceras
-ONPE_API_URL = "https://resultadosegundavuelta.onpe.gob.pe/presentacion-backend/eleccion-presidencial/participantes-ubicacion-geografica-nombre?idEleccion=10&tipoFiltro=eleccion"
-ONPE_TOTALS_URL = "https://resultadosegundavuelta.onpe.gob.pe/presentacion-backend/resumen-general/totales?idEleccion=10&tipoFiltro=eleccion"
-
+# Cabeceras para las peticiones
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
     "Accept": "application/json, text/plain, */*",
@@ -69,7 +66,9 @@ def load_dotenv():
 
 def fetch_onpe_results():
     """Consulta la API de la ONPE y obtiene los votos de los candidatos."""
-    req = urllib.request.Request(ONPE_API_URL, headers=HEADERS)
+    base_url = os.environ.get("ONPE_BASE_URL", "https://resultadosegundavuelta.onpe.gob.pe")
+    api_url = f"{base_url}/presentacion-backend/eleccion-presidencial/participantes-ubicacion-geografica-nombre?idEleccion=10&tipoFiltro=eleccion"
+    req = urllib.request.Request(api_url, headers=HEADERS)
     try:
         with urllib.request.urlopen(req, timeout=15) as response:
             if response.status == 200:
@@ -86,7 +85,9 @@ def fetch_onpe_results():
 
 def fetch_onpe_totals():
     """Consulta la API de la ONPE para obtener totales de actas y fecha de actualización."""
-    req = urllib.request.Request(ONPE_TOTALS_URL, headers=HEADERS)
+    base_url = os.environ.get("ONPE_BASE_URL", "https://resultadosegundavuelta.onpe.gob.pe")
+    totals_url = f"{base_url}/presentacion-backend/resumen-general/totales?idEleccion=10&tipoFiltro=eleccion"
+    req = urllib.request.Request(totals_url, headers=HEADERS)
     try:
         with urllib.request.urlopen(req, timeout=15) as response:
             if response.status == 200:
